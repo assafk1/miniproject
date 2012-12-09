@@ -2,8 +2,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.Callable;
 
-public class ConnectionHandler implements Runnable {
+public class ConnectionHandler implements Callable<String> {
 
 	Socket connection;
 	ObjectOutputStream out;
@@ -15,7 +16,7 @@ public class ConnectionHandler implements Runnable {
 		this.connection = connection;
 	}
 	@Override
-	public void run() {
+	public String call() {
 		try{
 			message= "";
 			System.out.println("Connection received from " + connection.getInetAddress().getHostName());
@@ -51,6 +52,7 @@ public class ConnectionHandler implements Runnable {
 				ioException.printStackTrace();
 			}
 		}
+		return message;
 	}
 
 	void sendMessage(String msg)

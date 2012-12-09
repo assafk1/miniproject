@@ -1,5 +1,4 @@
 
-import java.awt.ComponentOrientation;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.FlowLayout;
@@ -16,14 +15,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 
 
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Locale;
-
 
 public class MainWindow extends JFrame {
 
-	private static final long serialVersionUID = -4196001505757508980L;
 	private JPanel contentPane;
 	private final String arr[] = {"1","2","3","4","5","6","7","8","9","10"};
 	private JButton _btnManual, _btnRandom;
@@ -34,8 +28,6 @@ public class MainWindow extends JFrame {
 				try {
 					MainWindow.setDefaultLookAndFeelDecorated(true);
 					MainWindow frame = new MainWindow();
-					frame.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-					frame.applyComponentOrientation(ComponentOrientation.getOrientation(Locale.US));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -67,8 +59,6 @@ public class MainWindow extends JFrame {
 	private void initUI()
 	{
 		setTitle("The Simulator");
-		setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-		applyComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 582, 435);
 		contentPane = new JPanel();
@@ -77,7 +67,7 @@ public class MainWindow extends JFrame {
 		contentPane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JPanel panel = new JPanel();
-		panel.add(new JLabel("<HTML>Welcome to the DSCP Concurrent Backtracking simulator!<BR> Please make yout choice: </HTML>"));
+		panel.add(new JLabel("<HTML>Welcome to the DSCP Concurrent Backtracking Simulator!<BR> Please make your choice: </HTML>"));
 		contentPane.add(panel);
 		JPanel panel2 = new JPanel();
 		_btnRandom = new JButton("Generate new random DCSP");
@@ -105,7 +95,11 @@ public class MainWindow extends JFrame {
 			panel.add(btn);
 		}
 		add(panel);
+		contentPane.add(new JSeparator(JSeparator.HORIZONTAL));
+		contentPane.add(new JLabel("<HTML>Please define all agents before running simulation!</HTML>"));
+		contentPane.add(new JSeparator(JSeparator.HORIZONTAL));
 		contentPane.revalidate();
+		contentPane.add(new JButton("GO!"));
 	}
 	
 }

@@ -2,8 +2,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 
 public class Agent implements Runnable {
@@ -13,44 +16,60 @@ public class Agent implements Runnable {
 	ServerSocket providerSocket;
 	Socket connection = null;
 	ExecutorService executor;
-
-	public Agent(Vector<Constraint> constraints, int[] _domain) {
-		this._constraints = constraints;
-		this._domain = _domain;
+	
+	public static Agent CreateAgent(int[] domain)
+	{
+		Agent newAgent = null;
+		try{
+			ExecutorService executor = Executors.newFixedThreadPool(10);
+			ServerSocket providerSocket = new ServerSocket(2004, 10);
+			newAgent= new Agent(domain,providerSocket,executor);
+		}
+		catch(IOException ioException){
+			ioException.printStackTrace();
+		}
+		return newAgent;
 	}
 
-	public Agent(){
+
+	public Agent( int[] _domain, ServerSocket providerSocket, ExecutorService executor) {
 		this._constraints = new Vector<Constraint>();
-		this._domain = new int[10];
+		this._domain = _domain;
+		this.providerSocket = providerSocket;
+		this.executor = executor;
 	}
+
 
 	@Override
 	public void run()
 	{
 		listen();
-
+		
 	}
 
-	private void listen()
+	private String listen()
 	{
-		try{
-
-			ExecutorService executor = Executors.newFixedThreadPool(10);
-			providerSocket = new ServerSocket(2004, 10);
+		String message = null;
+		try {
 			while(true){
-				//1. creating a server socket
-
 				//2. Wait for connection
 				System.out.println("Waiting for connection");
 				connection = providerSocket.accept();
 				System.out.println("Connection received from " + connection.getInetAddress().getHostName());
-				executor.execute(new ConnectionHandler(connection));
-				//4. The two parts communicate via the input and output streams
+				Future<String> fut = executor.submit(new ConnectionHandler(connection));
+				message = fut.get();
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		catch(IOException ioException){
-			ioException.printStackTrace();
-		}
+		return message;
 	}
 
 
